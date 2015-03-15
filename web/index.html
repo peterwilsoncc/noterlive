@@ -11,8 +11,10 @@
 <script>
 var lastSpeakerHTML = "";
 function noteit() {
-    var name = (document.note.speakertwitter.value)?" "+document.note.speakertwitter.value +": " :" ";
-    document.note.composed.value = document.note.hashtag.value + name + document.note.quote.value;
+    var name = (document.note.speakertwitter.value)?" "+document.note.speakertwitter.value +" " :" ";
+    // document.note.composed.value = document.note.hashtag.value + name + document.note.quote.value;
+    var pwcc_composedValue = document.note.quote.value + ' -' + name + document.note.hashtag.value;
+	document.note.composed.value = pwcc_composedValue.replace(/\s{2,}/g,' ').replace(/^\s+|\s+$/g,'');
     var rawcount = strlen(document.note.composed.value);
     var munged = tw_text_proxy(document.note.composed.value);
     var mungleft = 140-strlen(munged);
@@ -28,7 +30,7 @@ function noteit() {
     document.getElementById("notebutton").style.backgroundColor = countColour;
 }
 function getSpeakerHTML() {
-    return "<a class='h-card p-category' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
+    return "<a class='h-card p-category' data-twitter-handle='" + document.note.speakertwitter.value + "' href='" + document.note.speakerurl.value +"'>" + document.note.speakername.value + '</a>: ';
 }
 function postit() {
     document.note.archive.value = document.note.archive.value + "\n" +document.note.composed.value;
@@ -36,11 +38,11 @@ function postit() {
     if (speakerHTML == lastSpeakerHTML) {
         speakerHTML = ""; // don't repeat for each line
     } else {
-        if (lastSpeakerHTML != "") { speakerHTML = "</blockquote>\n" + speakerHTML; }
-        speakerHTML = speakerHTML + " <blockquote><p>";
+        if (lastSpeakerHTML != "") { speakerHTML = "</ul>\n" + speakerHTML; }
+        speakerHTML = speakerHTML + " <ul>";
         lastSpeakerHTML = getSpeakerHTML();
     }            
-    document.note.blogpost.value = document.note.blogpost.value + "\n<p>" +speakerHTML + auto_link(document.note.quote.value, true);
+    document.note.blogpost.value = document.note.blogpost.value + "" +speakerHTML + "<li>"+ auto_link(document.note.quote.value, true) + "</li>";
     document.getElementById("preview").innerHTML = document.note.blogpost.value;
     document.getElementById("tweet").src='/sendtweet?status='+encodeURIComponent(document.note.composed.value);
     document.note.quote.value = "";
@@ -148,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <div class="col col-lg-12">
         <div class='input-group '>
           <span class="input-group-addon input">#</span>
-          <input type='text' name="hashtag" value="#indieweb">            
+          <input type='text' name="hashtag" value="#respond15">            
         </div>
       </div>
     </div>
